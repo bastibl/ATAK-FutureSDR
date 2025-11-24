@@ -257,8 +257,10 @@ dependencies {
 }
 configurations.all {
     resolutionStrategy.eachDependency { details ->
-        if (details.requested.group == 'androidx.core.core-viewtree') {
+        if (details.requested.group == 'androidx.core' &&
+                details.requested.name  == 'core-viewtree') {
             details.useVersion "1.0.0"
+            return
         }
         if (details.requested.group == 'androidx.core') {
             details.useVersion "1.15.0"

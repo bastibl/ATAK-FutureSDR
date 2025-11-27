@@ -32,7 +32,7 @@ mod android {
 
     #[allow(non_snake_case)]
     #[unsafe(no_mangle)]
-    pub extern "system" fn Java_net_bastibl_futuresdrhw_MainActivity_runFg(
+    pub extern "system" fn Java_com_atakmap_android_futuresdr_plugin_FutureSDRTool_runFg(
         _env: JNIEnv,
         _class: JClass,
         fd: jint,
@@ -44,7 +44,7 @@ mod android {
         }
 
         info!("calling run_fg");
-        let ret = run_fg(fd as u32);
-        info!("run_fg returned {:?}", ret);
+        // let ret = run_fg(fd as u32);
+        // info!("run_fg returned {:?}", ret);
     }
 }

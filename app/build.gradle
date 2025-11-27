@@ -111,7 +111,7 @@ def supportedFlavors =
 
 android {
     compileSdk 35
-    namespace 'org.futuresdr.atak'
+    namespace 'com.atakmap.android.futuresdr'
 
     signingConfigs {
         debug {

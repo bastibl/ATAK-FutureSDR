@@ -1,0 +1,17 @@
+[package]
+name = "atak-futuresdr"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+anyhow = "1.0"
+futuresdr = { path = "../futuresdr/", features = ["soapy"] }
+jni = { version = "0.21" }
+lora = { path = "../futuresdr/examples/lora/" }
+
+# upstream has bogus cast that avoid Android build
+[patch.crates-io]
+soapysdr = { git = "https://github.com/bastibl/rust-soapysdr.git" }

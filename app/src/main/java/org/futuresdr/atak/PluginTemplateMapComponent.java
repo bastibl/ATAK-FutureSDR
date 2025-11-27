@@ -12,6 +12,7 @@ import com.atakmap.coremap.log.Log;
 import org.futuresdr.atak.R;
 
 import org.futuresdr.atak.PluginTemplateDropDownReceiver;
+import org.futuresdr.atak.plugin.PluginNativeLoader;
 
 public class PluginTemplateMapComponent extends DropDownMapComponent {
 
@@ -35,6 +36,11 @@ public class PluginTemplateMapComponent extends DropDownMapComponent {
         DocumentedIntentFilter ddFilter = new DocumentedIntentFilter();
         ddFilter.addAction(PluginTemplateDropDownReceiver.SHOW_PLUGIN);
         registerDropDownReceiver(ddr, ddFilter);
+
+        PluginNativeLoader.init(pluginContext);
+        PluginNativeLoader.loadLibrary("atak-futuresdr");
+        PluginNativeLoader.loadLibrary("SoapySDR");
+        PluginNativeLoader.loadLibrary("SoapyHydraSDR");
     }
 
     @Override

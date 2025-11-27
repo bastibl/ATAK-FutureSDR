@@ -12,6 +12,8 @@ import org.futuresdr.atak.PluginTemplateMapComponent;
  *     the plugin.
  */
 public class PluginTemplateLifecycle extends AbstractPlugin {
+    private final static String TAG = "PluginTemplateLifecycle";
+
     public PluginTemplateLifecycle(IServiceController serviceController) {
         super(serviceController, new PluginTemplateTool(serviceController.getService(PluginContextProvider.class).getPluginContext()), new PluginTemplateMapComponent());
         PluginNativeLoader.init(serviceController.getService(PluginContextProvider.class).getPluginContext());

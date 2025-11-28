@@ -25,5 +25,5 @@ public class FutureSDRTool extends AbstractPluginTool implements Disposable {
     public void dispose() {
     }
 
-    public static native void runFg(int fd);
+    public static native void runFg(String device_args);
 }

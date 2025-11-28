@@ -15,8 +15,8 @@ public class FutureSDRMapComponent extends DropDownMapComponent {
     private static final String TAG = "FutureSDRMapComponent";
 
     private Context pluginContext;
-
     private FutureSDRDropDownReceiver ddr;
+    private HardwareManager hw;
 
     public void onCreate(final Context context, Intent intent,
             final MapView view) {
@@ -37,12 +37,15 @@ public class FutureSDRMapComponent extends DropDownMapComponent {
         PluginNativeLoader.loadLibrary("atak_futuresdr");
         PluginNativeLoader.loadLibrary("SoapySDR");
         PluginNativeLoader.loadLibrary("SoapyHydraSDR");
+
+        hw = new HardwareManager(view.getContext());
+        hw.start();
     }
 
     @Override
     public void onStart(final Context context, final MapView view) {
         Log.d(TAG, "onStart");
-        FutureSDRTool.runFg(0);
+        FutureSDRTool.runFg("device args string");
     }
 
     @Override

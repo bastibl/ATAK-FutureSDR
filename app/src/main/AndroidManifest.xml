@@ -1,7 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    
     tools:ignore="GoogleAppIndexingWarning">
+
+    <uses-feature android:name="android.hardware.usb.host" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application 
         android:allowBackup="false"
@@ -20,6 +22,9 @@
            tools:ignore="MissingClass">
            <intent-filter android:label="@string/app_name">
               <action android:name="com.atakmap.app.component" />
+           </intent-filter>
+           <intent-filter>
+               <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
            </intent-filter>
        </activity>
     </application>

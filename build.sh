@@ -28,6 +28,6 @@ export CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER="${TOOLCHAIN_BIN}/aarch64-linux
 cargo build --target aarch64-linux-android --lib --release
 
 TARGET_DIR=$(cargo metadata --format-version=1 --no-deps | jq -r '.target_directory')
-cp ${TARGET_DIR}/aarch64-linux-android/release/libatak_futuresdr.so ./app/src/main/jni/arm64-v8a/
+cp ${TARGET_DIR}/aarch64-linux-android/release/libatak_futuresdr.so ./app/src/main/jniLibs/arm64-v8a/
 
 

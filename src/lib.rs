@@ -3,13 +3,12 @@ use futuresdr::blocks::NullSink;
 use futuresdr::blocks::seify::Builder;
 use futuresdr::prelude::*;
 
-pub fn run_fg(fd: u32) -> Result<()> {
+pub fn run_fg(device_args: String) -> Result<()> {
     let mut fg = Flowgraph::new();
 
-    let args = format!("fd={fd}");
-    info!("device args {}", &args);
+    info!("device args {}", &device_args);
 
-    let src = Builder::new(args)?
+    let src = Builder::new(device_args)?
         .frequency(105.3e6 - 0.3e6)
         .sample_rate(3.2e6)
         .gain(40.0)
@@ -28,14 +27,14 @@ mod android {
     use super::*;
     use jni::JNIEnv;
     use jni::objects::JClass;
-    use jni::sys::jint;
+    use jni::objects::JString;
 
     #[allow(non_snake_case)]
     #[unsafe(no_mangle)]
     pub extern "system" fn Java_com_atakmap_android_futuresdr_plugin_FutureSDRTool_runFg(
-        _env: JNIEnv,
+        mut env: JNIEnv,
         _class: JClass,
-        fd: jint,
+        mut device_args: JString,
     ) {
         futuresdr::runtime::init();
         unsafe {
@@ -43,8 +42,15 @@ mod android {
             std::env::set_var("FUTURESDR_ctrlport_bind", "0.0.0.0:1337");
         }
 
-        info!("calling run_fg");
-        // let ret = run_fg(fd as u32);
+        let device_args: String = if let Ok(s) = env.get_string(&mut device_args) {
+            s.into()
+        } else {
+            error!("failed to get Java string for device args");
+            panic!("failed to get Java string for device args");
+        };
+
+        info!("calling run_fg with args {device_args}");
+        // let ret = run_fg(device_args);
         // info!("run_fg returned {:?}", ret);
     }
 }

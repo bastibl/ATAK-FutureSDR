@@ -17,6 +17,7 @@ public class FutureSDRMapComponent extends DropDownMapComponent {
     private Context pluginContext;
     private FutureSDRDropDownReceiver ddr;
     private HardwareManager hw;
+    private FlowgraphManager fg;
 
     public void onCreate(final Context context, Intent intent,
             final MapView view) {
@@ -38,14 +39,15 @@ public class FutureSDRMapComponent extends DropDownMapComponent {
         PluginNativeLoader.loadLibrary("SoapySDR");
         PluginNativeLoader.loadLibrary("SoapyHydraSDR");
 
+        fg = new FlowgraphManager();
         hw = new HardwareManager(view.getContext());
+        hw.setListener(fg);
         hw.start();
     }
 
     @Override
     public void onStart(final Context context, final MapView view) {
         Log.d(TAG, "onStart");
-        FutureSDRTool.runFg("device args string");
     }
 
     @Override

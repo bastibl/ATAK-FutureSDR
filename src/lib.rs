@@ -1,24 +1,68 @@
 use anyhow::Result;
-use futuresdr::blocks::NullSink;
 use futuresdr::blocks::seify::Builder;
 use futuresdr::prelude::*;
+use lora::Decoder;
+use lora::Deinterleaver;
+use lora::FftDemod;
+use lora::FrameSync;
+use lora::GrayMapping;
+use lora::HammingDec;
+use lora::HeaderDecoder;
+use lora::HeaderMode;
+
+const IMPLICIT_HEADER: bool = false;
 
 pub fn run_fg(device_args: String) -> Result<()> {
+    let rt = Runtime::new();
     let mut fg = Flowgraph::new();
 
-    info!("device args {}", &device_args);
+    let oversampling = 20;
+    let bandwidth = 125_000;
+    let soft_decoding = false;
+    let spreading_factor = 7;
 
-    let src = Builder::new(device_args)?
-        .frequency(105.3e6 - 0.3e6)
-        .sample_rate(3.2e6)
-        .gain(40.0)
+    let source = Builder::new(device_args)?
+        .sample_rate((bandwidth * oversampling) as f64)
+        .frequency(868_100_000.0)
+        .gain(10.0)
         .build_source()?;
 
-    let snk = NullSink::<Complex32>::new();
+    let frame_sync: FrameSync = FrameSync::new(
+        868_100_000,
+        bandwidth,
+        spreading_factor,
+        IMPLICIT_HEADER,
+        vec![],
+        oversampling,
+        None,
+        Some("header_crc_ok"),
+        false,
+        None,
+    );
+    let fft_demod: FftDemod = FftDemod::new(soft_decoding, spreading_factor);
+    let gray_mapping: GrayMapping = GrayMapping::new(soft_decoding);
+    let deinterleaver: Deinterleaver = Deinterleaver::new(soft_decoding);
+    let hamming_dec: HammingDec = HammingDec::new(soft_decoding);
+    let header_decoder = HeaderDecoder::new(HeaderMode::Explicit, false);
+    let decoder = Decoder::new();
 
-    connect!(fg, src.outputs[0] > snk);
+    connect!(fg,
+        source.outputs[0] > frame_sync > fft_demod > gray_mapping > deinterleaver > hamming_dec > header_decoder;
+        header_decoder.frame_info | frame_info.frame_sync;
+        header_decoder | decoder;
+    );
 
-    Runtime::new().run(fg)?;
+    let _ = rt.run(fg)?;
+
+    // debug!("[FG] Starting flowgraph termination...");
+    //
+    // rt.block_on(async move {
+    //     if let Err(e) = fg_task.await {
+    //         error!("[FG] Error during flowgraph termination: {}", e);
+    //     }
+    // });
+
+    debug!("[FG] Flowgraph cleanup completed");
     Ok(())
 }
 
@@ -31,7 +75,7 @@ mod android {
 
     #[allow(non_snake_case)]
     #[unsafe(no_mangle)]
-    pub extern "system" fn Java_com_atakmap_android_futuresdr_plugin_FutureSDRTool_runFg(
+    pub extern "system" fn Java_com_atakmap_android_futuresdr_FlowgraphManager_runFg(
         mut env: JNIEnv,
         _class: JClass,
         mut device_args: JString,
@@ -50,7 +94,9 @@ mod android {
         };
 
         info!("calling run_fg with args {device_args}");
-        // let ret = run_fg(device_args);
-        // info!("run_fg returned {:?}", ret);
+        std::thread::spawn(move || {
+            let ret = run_fg(device_args);
+            info!("run_fg returned {:?}", ret);
+        });
     }
 }

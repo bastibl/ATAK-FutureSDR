@@ -6,11 +6,6 @@ import com.atakmap.android.futuresdr.FutureSDRDropDownReceiver;
 import gov.tak.api.util.Disposable;
 import android.content.Context;
 
-/**
- * Please note:
- *     Support for versions prior to 4.5.1 can make use of a copy of AbstractPluginTool shipped with
- *     the plugin.
- */
 public class FutureSDRTool extends AbstractPluginTool implements Disposable {
 
     public FutureSDRTool(Context context) {
@@ -24,6 +19,4 @@ public class FutureSDRTool extends AbstractPluginTool implements Disposable {
     @Override
     public void dispose() {
     }
-
-    public static native void runFg(String device_args);
 }

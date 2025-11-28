@@ -21,8 +21,8 @@ class HardwareManager(
     }
 
     interface Listener {
-        fun onHackrfReady(conn: UsbDeviceConnection)
-        fun onHackrfDetached()
+        fun onHwReady(deviceArgs: String)
+        fun onHwDetached()
         fun onPermissionDenied()
     }
 
@@ -73,7 +73,7 @@ class HardwareManager(
                             Log.w(TAG, "DETACHED: ${devStr(d)}")
                         }
                         if (d != null && isHydraSDR(d) && devNameEqActive(d)) {
-                            listener?.onHackrfDetached()
+                            listener?.onHwDetached()
                             activeDevice = null
                         } else {
                             Log.i(
@@ -173,7 +173,7 @@ class HardwareManager(
         )
         activeDevice = d.deviceName
 
-        listener?.onHackrfReady(c)
+        listener?.onHwReady("driver=\"soapy\",soapy_driver=\"hydrasdr\",fd=${c.fileDescriptor}")
     }
 
     private fun devNameEqActive(d: UsbDevice): Boolean {

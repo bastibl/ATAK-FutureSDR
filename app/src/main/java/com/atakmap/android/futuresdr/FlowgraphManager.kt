@@ -1,6 +1,5 @@
 package com.atakmap.android.futuresdr
 
-import android.hardware.usb.UsbDeviceConnection
 import com.atakmap.coremap.log.Log
 
 class FlowgraphManager: HardwareManager.Listener {

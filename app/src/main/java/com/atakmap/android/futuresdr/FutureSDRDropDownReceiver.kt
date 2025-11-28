@@ -80,7 +80,7 @@ class FutureSDRDropDownReceiver(
     override fun onDropDownClose() {}
 
     companion object {
-        val TAG = FutureSDRDropDownReceiver::class.java.simpleName
+        const val TAG = "FutureSDRDropDownReceiver"
         const val SHOW_PLUGIN = "org.futuresdr.atak.SHOW_PLUGIN"
     }
 }

@@ -13,6 +13,7 @@ class FutureSDRMapComponent : DropDownMapComponent() {
     private lateinit var ddr: FutureSDRDropDownReceiver
     private lateinit var hw: HardwareManager
     private lateinit var fg: FlowgraphManager
+    private lateinit var bridge: AtakBridge
 
     override fun onCreate(
         context: Context, intent: Intent?,
@@ -36,8 +37,10 @@ class FutureSDRMapComponent : DropDownMapComponent() {
         PluginNativeLoader.loadLibrary("SoapySDR")
         PluginNativeLoader.loadLibrary("SoapyHydraSDR")
 
+        bridge = AtakBridge()
+        setBridge(bridge)
         fg = FlowgraphManager()
-        hw = HardwareManager(view.getContext())
+        hw = HardwareManager(view.context)
         hw.setListener(fg)
         hw.start()
     }
@@ -70,5 +73,8 @@ class FutureSDRMapComponent : DropDownMapComponent() {
 
     companion object {
         private const val TAG = "FutureSDRMapComponent"
+
+        @JvmStatic
+        external fun setBridge(bridge: AtakBridge)
     }
 }
